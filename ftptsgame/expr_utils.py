@@ -15,17 +15,17 @@ class Node(object):
         self.left = left
         self.right = right
 
-    def __eq__(self, node):
+    def __ne__(self, node):
         """Judge equivalence two expressions."""
         for _ in range(0, 10):
             v_test = self.__generate_values(random_value=True)
-            if self.evaluate(v_test) == node.evaluate(v_test):
+            if self.evaluate(v_test) != node.evaluate(v_test):
                 return True
         return False
 
-    def __ne__(self, node):
+    def __eq__(self, node):
         """Judge in-equivalence two expressions."""
-        return not self.__eq__(node)
+        return not self.__ne__(node)
 
     def __pre_simplify_validation(self, value, parent_ch):
         """Validation before simplication of the formula."""
