@@ -43,23 +43,24 @@ class Node(object):
         result['0'], result['1'], result['-1'] = 0, 1, -1  # forcibly replace
         return result
 
-    def evaluate(self, values: dict = {}) -> Fraction:
+    def evaluate(self, values: dict = {}) -> Fraction or int:
         """Evaluate the value of the node using a substitute dictionary."""
         if not values:
             values = self.__generate_values()
 
+        # only convert to Fraction if division operator is met.
         operation = {
             '+': lambda x, y: x + y,
             '-': lambda x, y: x - y,
             '*': lambda x, y: x * y,
-            '/': lambda x, y: x / y if y != 0 else math.inf
+            '/': lambda x, y: Fraction(x, y) if y != 0 else math.inf
         }
 
         if self.ch in '+-*/':
             return operation[self.ch](self.left.evaluate(values),
                                       self.right.evaluate(values))
         else:
-            return Fraction(values[self.ch])
+            return values[self.ch]
 
     def extract(self) -> list:
         """Extract numbers from the node."""
