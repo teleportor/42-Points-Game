@@ -27,35 +27,6 @@ class Node(object):
         """Judge in-equivalence two expressions."""
         return not self.__ne__(node)
 
-    def __len__(self):
-        """Calculate the depth of the expression tree."""
-        if self.ch not in '+-*/':
-            return 0
-        else:
-            return max(len(self.left), len(self.right)) + 1
-
-    def __repr__(self):
-        """Print the node."""
-        if self.ch not in '+-*/':
-            return self.ch
-
-        left = repr(self.left)
-        right = repr(self.right)
-
-        if self.ch in '*/' and self.left.ch in '+-':
-            left = '(' + left + ')'
-
-        if self.ch in '*/' and self.right.ch in '+-' or \
-           self.ch in '-' and self.right.ch in '+-' or \
-           self.ch in '/' and self.right.ch in '*/':
-            right = '(' + right + ')'
-
-        return left + ' ' + self.ch + ' ' + right
-
-    def __str__(self):
-        """Print the node."""
-        return self.__repr__()
-
     def __pre_simplify_validation(self, value, parent_ch):
         """Validation before simplication of the formula."""
         add_sub_check = (value == 0 and parent_ch in '+-')
