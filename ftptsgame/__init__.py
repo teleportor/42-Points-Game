@@ -46,55 +46,12 @@ class FTPtsGame(object):
         elapsed = datetime.datetime.now() - self.__timer
         return elapsed
 
-    def __generate_problem_from_database(self, **kwargs) -> tuple:
-        """Generate a problem from database."""
-        minimum_solutions = kwargs[
-            'minimum_solutions'] if 'minimum_solutions' in kwargs else 1
-        maximum_solutions = kwargs[
-            'maximum_solutions'] if 'maximum_solutions' in kwargs else 100
-        problem_list = [
-            k for k in DATABASE_42.keys()
-            if minimum_solutions <= DATABASE_42[k] <= maximum_solutions
-        ]
-        return random.choice(problem_list)
-
-    def __generate_problem_by_user(self, **kwargs) -> tuple:
-        """Generate a problem by user."""
-        if 'problem' not in kwargs:
-            return self.__generate_problem_from_database()
-
-        problem = tuple(sorted(list(kwargs['problem'])))
-        if problem not in DATABASE_42:
-            raise ValueError('Problem has no solutions.')
+    def generate_problem(self, **kwargs) -> tuple:
+        """Generate a random problem from the range of numbers."""
+        minimum = kwargs['minimum'] if 'minimum' in kwargs else 0
+        maximum = kwargs['maximum'] if 'maximum' in kwargs else 13
+        problem = [random.randint(minimum, maximum) for _ in range(5)]
         return problem
-
-    def __generate_problem_by_probability(self, **kwargs) -> tuple:
-        """Generate a problem by frequency / probability."""
-        if 'prob' not in kwargs:
-            return self.__generate_problem_from_database()
-
-        prob_list = list(kwargs['prob'])
-        if len(prob_list) != len(DATABASE_42.keys()):
-            raise ValueError('Prob_list must match the size of the database.')
-
-        r = random.random() * sum(prob_list)
-        cumulative_prob = 0.0
-        for problem, problem_prob in zip(DATABASE_42.keys(), prob_list):
-            cumulative_prob += problem_prob
-            if r < cumulative_prob:
-                return problem
-
-    def generate_problem(self, method: str, **kwargs) -> tuple:
-        """Generate a random problem from the database."""
-        self.__status_check(required_status=False)
-        if method == 'database':
-            self.__problem = self.__generate_problem_from_database(**kwargs)
-        elif method == 'custom':
-            self.__problem = self.__generate_problem_by_user(**kwargs)
-        elif method == 'probability':
-            self.__problem = self.__generate_problem_by_probability(**kwargs)
-        else:
-            raise TypeError('Invalid problem type.')
 
     def get_current_problem(self) -> tuple:
         """Get current problem. Effective when playing."""
